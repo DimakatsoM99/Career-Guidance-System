@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Career Guidance System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f0f4f8;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label, input, textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Career Guidance System</h2>
+  <form id="careerForm">
+    <label for="interests">Your Interests:</label>
+    <textarea id="interests" name="interests" required></textarea>
+
+    <label for="skills">Your Skills:</label>
+    <textarea id="skills" name="skills" required></textarea>
+
+    <label for="subject">Favorite Subject:</label>
+    <input type="text" id="subject" name="subject" required />
+
+    <button type="submit">Get Career Suggestions</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('careerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const data = {
+        interests: document.getElementById('interests').value,
+        skills: document.getElementById('skills').value,
+        favorite_subject: document.getElementById('subject').value
+      };
+
+      fetch('http://127.0.0.1:9000/api/careers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(data => {
+        const result = document.getElementById('result');
+        result.innerHTML = "<h3>Suggested Careers:</h3><ul>" +
+          data.suggested_careers.map(c => "<li>" + c + "</li>").join("") +
+          "</ul>";
+      })
+      .catch(err => {
+        document.getElementById('result').innerText = 'Error: ' + err.message;
+      });
+    });
+  </script>
+</body>
+</html>
